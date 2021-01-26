@@ -1,14 +1,14 @@
 ## KoGPT2 http server
 실행방법:
 ```
-pythom3.8 -m pip install -r requirements.txt
+python3.8 -m pip install -r requirements.txt
 port=8080 python3.8 app.py
 ```
 
 예시:
 ```
 req: GET /job?query=깃허브
-res: {"result":["는","털","▁이""],"success":true}
+res: {"result":["는","털","▁이"],"success":true}
 
 result: 정확도 별로 정렬된 추천 키워드, (▁는 스페이스, </s>는 문장 끝을 의미)
 ```

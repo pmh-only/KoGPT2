@@ -1,14 +1,14 @@
+import os
 import torch
 import platform
-import os
-from flask import Flask, request, jsonify, __version__ as flaskver
-from kogpt2.pytorch_kogpt2 import get_pytorch_kogpt2_model
-from gluonnlp.data import SentencepieceTokenizer
+import sentencepiece
 from kogpt2.utils import get_tokenizer
+from kogpt2.pytorch_kogpt2 import get_pytorch_kogpt2_model
+from flask import Flask, request, jsonify, __version__ as flaskver
 
 tok_path = get_tokenizer(cachedir='./bin/')
 model, vocab = get_pytorch_kogpt2_model(cachedir='./bin/')
-tok = SentencepieceTokenizer(tok_path,  num_best=0, alpha=0)
+tok = sentencepiece.SentencePieceProcessor(tok_path)
 
 app = Flask(__name__)
 port = int(os.getenv('port', '8080'))
@@ -42,7 +42,7 @@ def job():
     return jsonify(success=True, result=result)
 
 def gpt2 (sent):
-  toked = tok(sent)
+  toked = tok.Encode(sent, alpha=0, nbest_size=0, out_type=str)
   input_ids = torch.tensor([vocab[vocab.bos_token],]  + vocab[toked]).unsqueeze(0)
   pred = model(input_ids)[0]
   gen = vocab.to_tokens(torch.argmax(pred, axis=-1).squeeze().tolist())
